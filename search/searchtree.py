@@ -47,10 +47,10 @@ class TreeSearch:
                 return None
             path = self.remove_choice(frontier)
             s = path[-1] # last state in path
+            self.expanded_nodes += 1 
             s.display()
             if s.is_goal == True:
                 return path
-            self.expanded_nodes += 1
             if s.children != None:
                 if not self.goLeftToRight:
                     for a in s.children:

@@ -40,26 +40,37 @@ class TreeSearch:
             result = frontier.pop(0) # return the shortest
         return result
 
+    def is_in_frontier(self, frontier, node_to_test):
+        for path in frontier:
+            for node in path:
+                if node == node_to_test:
+                    return True
+        return False
+
     def search(self): # todo: add explored set
         frontier = [[start]]
+        explored = []
         while True:
             if len(frontier) == 0: 
                 return None
             path = self.remove_choice(frontier)
             s = path[-1] # last state in path
+            self.expanded_nodes += 1
             s.display()
+            explored.append(s)
             if s.is_goal == True:
                 return path
-            self.expanded_nodes += 1
             if s.children != None:
                 if not self.goLeftToRight:
                     for a in s.children:
                         new_path = path + [a]
-                        frontier.append(new_path)
+                        if not a in explored and not self.is_in_frontier(frontier, a):
+                            frontier.append(new_path)
                 else:
                     for a in reversed(s.children):
                         new_path = path + [a]
-                        frontier.append(new_path)
+                        if not a in explored and not self.is_in_frontier(frontier, a):
+                            frontier.append(new_path)
 
             raw_input("Press Enter to continue...")
 
