@@ -47,7 +47,7 @@ class TreeSearch:
                     return True
         return False
 
-    def search(self): # todo: add explored set
+    def search(self): 
         frontier = [[start]]
         explored = []
         while True:
