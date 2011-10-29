@@ -63,7 +63,14 @@ testGetDictionary = TestCase (assertEqual "" ["A", "PERFECT", "WORLD", "MY", "WO
 testGetClasses = TestCase (do assertEqual "" [["A", "PERFECT", "WORLD"], ["MY", "PERFECT", "WOMAN"], ["PRETTY", "WOMAN"]] (getClass "Movie")
                               assertEqual "" [["A", "PERFECT", "DAY"], ["ELECTRIC", "STORM"], ["ANOTHER", "RAINY", "DAY"]] (getClass "Song"))
 
-allTests = TestList [TestLabel "testProbabilityOfWordGivenClassLaplacian" testProbabilityOfWordGivenClassLaplacian, TestLabel "testProbabilityOfWordGivenClass" testProbabilityOfWordGivenClass, TestLabel "testNumberOfOccurencesOfWordInClass" testNumberOfOccurencesOfWordInClass, TestLabel "testWordCountInClass" testWordCountInClass, TestLabel "testProbabilityOfClassLaplacian" testProbabilityOfClassLaplacian, TestLabel "testProbabilityOfClass" testProbabilityOfClass, TestLabel "testGetClasses" testGetClasses, TestLabel "testGetDictionary" testGetDictionary]
+allTests = TestList [TestLabel "testProbabilityOfWordGivenClassLaplacian" testProbabilityOfWordGivenClassLaplacian,
+                     TestLabel "testProbabilityOfWordGivenClass" testProbabilityOfWordGivenClass,
+                     TestLabel "testNumberOfOccurencesOfWordInClass" testNumberOfOccurencesOfWordInClass,
+                     TestLabel "testWordCountInClass" testWordCountInClass,
+                     TestLabel "testProbabilityOfClassLaplacian" testProbabilityOfClassLaplacian,
+                     TestLabel "testProbabilityOfClass" testProbabilityOfClass,
+                     TestLabel "testGetClasses" testGetClasses,
+                     TestLabel "testGetDictionary" testGetDictionary]
 
 
 
