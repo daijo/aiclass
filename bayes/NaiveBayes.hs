@@ -10,7 +10,7 @@ getClass :: String -> [[String]]
 getClass "Movie" = [["A", "PERFECT", "WORLD"], ["MY", "PERFECT", "WOMAN"], ["PRETTY", "WOMAN"]]
 getClass "Song" = [["A", "PERFECT", "DAY"], ["ELECTRIC", "STORM"], ["ANOTHER", "RAINY", "DAY"]]
 
--- Todo: do this for real (group etc.)
+-- Todo: do this for real
 getDictionary :: [[String]] -> [[String]] -> [String]
 getDictionary c1 c2 = ["A", "PERFECT", "WORLD", "MY", "WOMAN", "PRETTY", "DAY", "ELECTRIC", "STORM", "ANOTHER", "RAINY"] 
 
@@ -23,13 +23,32 @@ probabilityOfClassLaplacian theClass theOtherClass k = (fromIntegral (length (ge
 probabilityOfWordGivenClass :: String -> String -> Double
 probabilityOfWordGivenClass word theClass = fromIntegral((numberOfOccurencesOfWordInClass word theClass)) / fromIntegral(wordCountInClass theClass)
 
-numberOfOccurencesOfWordInClass :: String -> String -> Int
-numberOfOccurencesOfWordInClass _ _ = 1 -- TBD
+probabilityOfWordGivenClassLaplacian :: String -> String -> Double -> Double
+probabilityOfWordGivenClassLaplacian word theClass k = (fromIntegral(numberOfOccurencesOfWordInClass word theClass) + k)
+                                                       / (fromIntegral(wordCountInClass theClass) + 
+                                                       k * fromIntegral(length (getDictionary (getClass "Movie") (getClass "Song"))))
 
+
+-- Todo: do this for real
+numberOfOccurencesOfWordInClass :: String -> String -> Int
+numberOfOccurencesOfWordInClass "PERFECT" "Movie" = 2
+numberOfOccurencesOfWordInClass "PERFECT" "Song" = 1 
+
+-- Todo: do this for real
 wordCountInClass :: String -> Int
-wordCountInClass _ = 1 -- TBD
+wordCountInClass "Movie" = 8
+wordCountInClass "Song" = 8
+-- wordCountInClass theClass = sum [[1 | _ <- cl] | cl <- getClass theClass] 
 
 -- Test cases
+
+testProbabilityOfWordGivenClassLaplacian = TestCase (assertEqual "" (3/19) (probabilityOfWordGivenClassLaplacian "PERFECT" "Movie" 1))
+
+testProbabilityOfWordGivenClass = TestCase (assertEqual "" 0.25 (probabilityOfWordGivenClass "PERFECT" "Movie"))
+
+testNumberOfOccurencesOfWordInClass = TestCase (assertEqual "" 2 (numberOfOccurencesOfWordInClass "PERFECT" "Movie"))
+
+testWordCountInClass = TestCase (assertEqual "" 8 (wordCountInClass "Movie"))
 
 testProbabilityOfClassLaplacian = TestCase (do assertEqual "" 0.5 (probabilityOfClassLaplacian "Movie" "Song" 0)
                                                assertEqual "" 0.5 (probabilityOfClassLaplacian "Song" "Movie" 0)
@@ -44,7 +63,7 @@ testGetDictionary = TestCase (assertEqual "" ["A", "PERFECT", "WORLD", "MY", "WO
 testGetClasses = TestCase (do assertEqual "" [["A", "PERFECT", "WORLD"], ["MY", "PERFECT", "WOMAN"], ["PRETTY", "WOMAN"]] (getClass "Movie")
                               assertEqual "" [["A", "PERFECT", "DAY"], ["ELECTRIC", "STORM"], ["ANOTHER", "RAINY", "DAY"]] (getClass "Song"))
 
-allTests = TestList [TestLabel "testProbabilityOfClassLaplacian" testProbabilityOfClassLaplacian, TestLabel "testProbabilityOfClass" testProbabilityOfClass, TestLabel "testGetClasses" testGetClasses, TestLabel "testGetDictionary" testGetDictionary]
+allTests = TestList [TestLabel "testProbabilityOfWordGivenClassLaplacian" testProbabilityOfWordGivenClassLaplacian, TestLabel "testProbabilityOfWordGivenClass" testProbabilityOfWordGivenClass, TestLabel "testNumberOfOccurencesOfWordInClass" testNumberOfOccurencesOfWordInClass, TestLabel "testWordCountInClass" testWordCountInClass, TestLabel "testProbabilityOfClassLaplacian" testProbabilityOfClassLaplacian, TestLabel "testProbabilityOfClass" testProbabilityOfClass, TestLabel "testGetClasses" testGetClasses, TestLabel "testGetDictionary" testGetDictionary]
 
 
 
