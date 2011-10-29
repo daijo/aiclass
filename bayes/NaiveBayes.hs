@@ -20,6 +20,14 @@ probabilityOfClass theClass theOtherClass = (fromIntegral (length (getClass theC
 probabilityOfClassLaplacian :: String -> String -> Double -> Double
 probabilityOfClassLaplacian theClass theOtherClass k = (fromIntegral (length (getClass theClass)) + k) / (fromIntegral (length (getClass theClass)) + fromIntegral (length (getClass theOtherClass)) + 2 * k)
 
+probabilityOfWordGivenClass :: String -> String -> Double
+probabilityOfWordGivenClass word theClass = fromIntegral((numberOfOccurencesOfWordInClass word theClass)) / fromIntegral(wordCountInClass theClass)
+
+numberOfOccurencesOfWordInClass :: String -> String -> Int
+numberOfOccurencesOfWordInClass _ _ = 1 -- TBD
+
+wordCountInClass :: String -> Int
+wordCountInClass _ = 1 -- TBD
 
 -- Test cases
 
