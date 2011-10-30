@@ -28,11 +28,12 @@ probabilityOfWordGivenClassLaplacian word theClass k = (fromIntegral(numberOfOcc
                                                        / (fromIntegral(wordCountInClass theClass) + 
                                                        k * fromIntegral(length (getDictionary (getClass "Movie") (getClass "Song"))))
 
-
 -- Todo: do this for real
 numberOfOccurencesOfWordInClass :: String -> String -> Int
 numberOfOccurencesOfWordInClass "PERFECT" "Movie" = 2
-numberOfOccurencesOfWordInClass "PERFECT" "Song" = 1 
+numberOfOccurencesOfWordInClass "PERFECT" "Song" = 1
+numberOfOccurencesOfWordInClass "STORM" "Movie" = 0
+numberOfOccurencesOfWordInClass "STORM" "Song" = 1
 
 -- Todo: do this for real
 wordCountInClass :: String -> Int
@@ -40,9 +41,31 @@ wordCountInClass "Movie" = 8
 wordCountInClass "Song" = 8
 -- wordCountInClass theClass = sum [[1 | _ <- cl] | cl <- getClass theClass] 
 
+probabilityOfTitle :: (String, String) -> Double -> Double
+probabilityOfTitle (f, s) k = (probabilityOfWordGivenClassLaplacian f "Movie" k) * (probabilityOfWordGivenClassLaplacian s "Movie" k) * (probabilityOfClassLaplacian "Movie" "Song" k) +
+                           (probabilityOfWordGivenClassLaplacian f "Song" k) * (probabilityOfWordGivenClassLaplacian s "Song" k) * (probabilityOfClassLaplacian "Song" "Movie" k)
+
+probabilityOfTitleGivenClass :: (String, String) -> String -> Double -> Double
+probabilityOfTitleGivenClass (f, s) c k =  (probabilityOfWordGivenClassLaplacian f c k) * (probabilityOfWordGivenClassLaplacian s c k) 
+
+probabilityOfClassGivenTitle :: String -> String -> (String, String) -> Double -> Double
+probabilityOfClassGivenTitle c oc (f, s) k = ((probabilityOfTitleGivenClass (f, s) c k) * (probabilityOfClassLaplacian c oc k)) /
+                                             (probabilityOfTitle (f, s) k)
+
 -- Test cases
 
-testProbabilityOfWordGivenClassLaplacian = TestCase (assertEqual "" (3/19) (probabilityOfWordGivenClassLaplacian "PERFECT" "Movie" 1))
+testProbabilityOfClassGivenTitle = TestCase (assertEqual "" (3/7) (probabilityOfClassGivenTitle "Movie" "Song" ("PERFECT", "STORM") 1))
+
+testProbabilityOfTitleGivenClass = TestCase (assertEqual "" (3/361) (probabilityOfTitleGivenClass ("PERFECT", "STORM") "Movie" 1))
+
+testProbabilityOfTitle = TestCase (assertEqual "" (7/722) (probabilityOfTitle ("PERFECT", "STORM") 1))
+
+testProbabilityOfWordGivenClassLaplacian = TestCase (do assertEqual "" (1/19) (probabilityOfWordGivenClassLaplacian "STORM" "Movie" 1)
+                                                        assertEqual "" (2/19) (probabilityOfWordGivenClassLaplacian "STORM" "Song" 1)
+                                                        assertEqual "" (3/19) (probabilityOfWordGivenClassLaplacian "PERFECT" "Movie" 1)
+                                                        assertEqual "" (2/19) (probabilityOfWordGivenClassLaplacian "PERFECT" "Song" 1)
+                                                        assertEqual "" (1/4) (probabilityOfWordGivenClassLaplacian "PERFECT" "Movie" 0)
+                                                        assertEqual "" (1/8) (probabilityOfWordGivenClassLaplacian "PERFECT" "Song" 0))
 
 testProbabilityOfWordGivenClass = TestCase (assertEqual "" 0.25 (probabilityOfWordGivenClass "PERFECT" "Movie"))
 
@@ -63,7 +86,10 @@ testGetDictionary = TestCase (assertEqual "" ["A", "PERFECT", "WORLD", "MY", "WO
 testGetClasses = TestCase (do assertEqual "" [["A", "PERFECT", "WORLD"], ["MY", "PERFECT", "WOMAN"], ["PRETTY", "WOMAN"]] (getClass "Movie")
                               assertEqual "" [["A", "PERFECT", "DAY"], ["ELECTRIC", "STORM"], ["ANOTHER", "RAINY", "DAY"]] (getClass "Song"))
 
-allTests = TestList [TestLabel "testProbabilityOfWordGivenClassLaplacian" testProbabilityOfWordGivenClassLaplacian,
+allTests = TestList [TestLabel "testProbabilityOfClassGivenTitle" testProbabilityOfClassGivenTitle,
+                     TestLabel "testProbabilityOfTitleGivenClass" testProbabilityOfTitleGivenClass,
+                     TestLabel "testProbabilityOfTitle" testProbabilityOfTitle,
+                     TestLabel "testProbabilityOfWordGivenClassLaplacian" testProbabilityOfWordGivenClassLaplacian,
                      TestLabel "testProbabilityOfWordGivenClass" testProbabilityOfWordGivenClass,
                      TestLabel "testNumberOfOccurencesOfWordInClass" testNumberOfOccurencesOfWordInClass,
                      TestLabel "testWordCountInClass" testWordCountInClass,
